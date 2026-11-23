@@ -1,0 +1,57 @@
+%% PawPal+ applied AI system architecture (RAG care advisor + scheduler)
+flowchart TD
+    owner(["Owner (Streamlit UI or CLI)"])
+
+    subgraph Scheduling["Scheduler (original Module 2 system)"]
+        tasks["Owner / Pet / Task data"]
+        sched["Scheduler.build_plan<br/>priority + time budget + set times"]
+        plan["DailyPlan<br/>scheduled, skipped, warnings, reasons"]
+        tasks --> sched --> plan
+    end
+
+    subgraph Advisor["Care advisor (pawpal_ai, RAG)"]
+        inguard["Input guardrails<br/>sanitize text, emergency check, dosage check"]
+        safe["Fixed safe reply<br/>call your vet / emergency clinic"]
+        retr["Retriever<br/>BM25 + species filter"]
+        conf{"Retrieval confidence<br/>at least 0.5?"}
+        refuse["Refuse: not covered<br/>by the care guides"]
+        gen["Generator<br/>Claude API, or offline extractive mode"]
+        outguard["Output guardrails<br/>valid fields, cites a retrieved source,<br/>no dose amounts, no duplicates"]
+        fallback["Offline fallback<br/>built straight from the sources"]
+        result["Cited answer or task suggestions"]
+        review["Plan review<br/>missing essentials, skipped essentials,<br/>priority below the care guides"]
+    end
+
+    kb[("knowledge/*.md<br/>care guides")]
+    log[("logs/pawpal.log")]
+
+    owner -- "pets, tasks, minutes, day window" --> tasks
+    owner -- "question or 'suggest tasks' + note" --> inguard
+    inguard -- "emergency / dose request" --> safe
+    inguard -- "ok" --> retr
+    kb --> retr
+    retr -- "top-k sources + confidence" --> conf
+    conf -- "no" --> refuse
+    conf -- "yes" --> gen
+    gen --> outguard
+    outguard -- "fails" --> fallback
+    outguard -- "passes" --> result
+    fallback --> result
+    result -- "HUMAN CHECK: owner ticks which suggestions to add" --> tasks
+    plan --> review
+    kb --> review
+    review -- "HUMAN CHECK: owner chooses to apply priority fixes" --> tasks
+    plan --> owner
+    safe --> owner
+    refuse --> owner
+
+    Advisor -. "every retrieval, model call, rejection, fallback" .-> log
+
+    subgraph Testing["Testing and evaluation"]
+        pytest["pytest: 88 tests<br/>scheduler + advisor, fake model"]
+        evalh["evaluate.py: 21 questions, 4 suggestion cases,<br/>7 scripted bad model replies"]
+    end
+    pytest -. checks .-> sched
+    pytest -. checks .-> outguard
+    evalh -. measures .-> retr
+    evalh -. stress-tests .-> outguard

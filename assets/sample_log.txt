@@ -1,0 +1,11 @@
+2026-11-23 15:25:25,242 INFO pawpal.knowledge: Loaded 11 knowledge documents from <repo>/knowledge
+2026-11-23 15:25:25,244 INFO pawpal.advisor: review_plan day=2026-11-23 gaps=[('Mochi', 'missing', 'dog-feeding'), ('Mochi', 'missing', 'dog-feeding'), ('Luna', 'missing', 'cat-feeding-water'), ('Luna', 'missing', 'cat-litter'), ('Luna', 'priority', 'medication'), ('Luna', 'priority', 'cat-feeding-water')]
+2026-11-23 15:25:25,244 INFO pawpal.advisor: apply_priority_fixes changed=["Luna: 'Meds' low -> high [medication]", "Luna: 'Feed Luna' medium -> high [cat-feeding-water]"]
+2026-11-23 15:25:25,244 INFO pawpal.retriever: retrieve query='daily essentials food feeding water bathroom litter walk exercise play routine young dog with lots of energy' species=dog -> [('routine-planning', 17.53), ('dog-exercise', 10.5), ('dog-feeding', 7.26), ('dog-grooming-dental', 0.59)] confidence=0.61 unknown=['young']
+2026-11-23 15:25:25,245 INFO pawpal.advisor: suggest_tasks pet=Mochi mode=offline kept=['Breakfast', 'Dinner', 'Refresh water bowl', 'Evening walk', 'Brush teeth', 'Brush coat'] rejected=[]
+2026-11-23 15:25:25,245 INFO pawpal.retriever: retrieve query='How often should I scoop the litter box?' species=cat -> [('cat-litter', 9.67), ('routine-planning', 2.58), ('cat-feeding-water', 2.47)] confidence=1.00 unknown=[]
+2026-11-23 15:25:25,246 INFO pawpal.retriever: retrieve query='Can I use human toothpaste on my dog?' species=dog -> [('dog-grooming-dental', 4.09), ('emergencies', 2.53), ('medication', 1.75)] confidence=1.00 unknown=[]
+2026-11-23 15:25:25,246 INFO pawpal.advisor: answer refused kind=dosage question='How much Benadryl can I give my dog?'
+2026-11-23 15:25:25,246 INFO pawpal.advisor: answer refused kind=emergency question='My dog just ate a bar of chocolate'
+2026-11-23 15:25:25,246 INFO pawpal.retriever: retrieve query='What should I feed my parrot?' species=other -> [('small-pets', 1.23)] confidence=0.28 unknown=['parrot']
+2026-11-23 15:25:25,246 INFO pawpal.advisor: answer refused low confidence 0.28 question='What should I feed my parrot?'
